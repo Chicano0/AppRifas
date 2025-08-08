@@ -49,10 +49,9 @@ app.get('/api/user', (req, res) => {
   }
 });
 
-// Iniciar servidor
-const PORT = process.env.PORT || 3000;
-const HOST = process.env.HOST || 'localhost';
+// Iniciar servidor SOLO en localhost
+const PORT = 3000;
 
-app.listen(PORT, HOST, () => {
-  console.log(`Servidor corriendo en http://${HOST}:${PORT}`);
+app.listen(PORT, 'localhost', () => {
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });

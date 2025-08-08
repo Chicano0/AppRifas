@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Servir solo archivos públicos que no necesitan autenticación
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'Public'))); // ← Cambiado a "Public"
 
 // Configurar sesión
 app.use(session({
@@ -28,16 +28,16 @@ app.use(session({
 // Rutas
 app.use('/', loginRoutes);
 app.use('/', dashboardRoutes);
-app.use('/rifas', rifasRouter); // ⬅️ El archivo Rifas.html ya no está en public
+app.use('/rifas', rifasRouter);
 
 // Página principal
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'Public', 'index.html')); // ← Cambiado a "Public"
 });
 
 // Página de login
 app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+  res.sendFile(path.join(__dirname, 'Public', 'login.html')); // ← Cambiado a "Public"
 });
 
 // API para obtener usuario actual

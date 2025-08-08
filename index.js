@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Servir solo archivos públicos que no necesitan autenticación
-app.use(express.static(path.join(__dirname, 'Public'))); // ← Cambiado a "Public"
+app.use(express.static(path.join(__dirname, 'Public'))); // ← "Public" con P mayúscula
 
 // Configurar sesión
 app.use(session({
@@ -32,12 +32,12 @@ app.use('/rifas', rifasRouter);
 
 // Página principal
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'Public', 'index.html')); // ← Cambiado a "Public"
+  res.sendFile(path.join(__dirname, 'Public', 'index.html'));
 });
 
 // Página de login
 app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'Public', 'login.html')); // ← Cambiado a "Public"
+  res.sendFile(path.join(__dirname, 'Public', 'login.html'));
 });
 
 // API para obtener usuario actual
@@ -49,9 +49,10 @@ app.get('/api/user', (req, res) => {
   }
 });
 
-// Iniciar servidor SOLO en localhost
-const PORT = 3000;
+// Iniciar servidor: local = localhost, Render = 0.0.0.0
+const PORT = process.env.PORT || 3000;
+const HOST = process.env.RENDER ? '0.0.0.0' : 'localhost';
 
-app.listen(PORT, 'localhost', () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`Servidor corriendo en http://${HOST}:${PORT}`);
 });

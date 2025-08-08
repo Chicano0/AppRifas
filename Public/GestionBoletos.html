@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Boletos - Sistema de Rifas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #000 0%, #1a1a1a 50%, #000 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        /* Header simplificado */
+        .header {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border-bottom: 3px solid #d4af37;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #d4af37;
+            font-size: clamp(20px, 4vw, 28px);
+            margin: 0;
+        }
+
+        .header p {
+            color: #ccc;
+            font-size: 14px;
+            margin: 5px 0 0 0;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-email {
+            color: #d4af37;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 5px;
+            display: inline-block;
+        }
+
+        .logout-btn:hover {
+            background: #c82333;
+        }
+
+        /* Navigation */
+        .navigation-links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            background: #2a2a2a;
+            color: #d4af37;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            border: 1px solid #444;
+            font-size: 14px;
+        }
+
+        .nav-link:hover {
+            background: #d4af37;
+            color: #000;
+        }
+
+        /* Selector de Rifa */
+        .controls-section {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border: 2px solid #333;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .rifa-selector {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .rifa-selector label {
+            color: #d4af37;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .rifa-select {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px 15px;
+            border: 2px solid #444;
+            border-radius: 10px;
+            background: #2a2a2a;
+            color: white;
+            font-size: 14px;
+        }
+
+        .rifa-select:focus {
+            outline: none;
+            border-color: #d4af37;
+        }
+
+        .load-btn {
+            padding: 12px 25px;
+            background: #d4af37;
+            color: #000;
+            border: none;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .load-btn:disabled {
+            background: #666;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .load-btn:hover:not(:disabled) {
+            background: #ffd700;
+        }
+
+        /* Messages */
+        .message-container {
+            margin: 15px 0;
+            min-height: 30px;
+        }
+
+        .success-message, .error-message {
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .success-message {
+            background: #28a745;
+            color: white;
+        }
+
+        .error-message {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* Información de la Rifa */
+        .rifa-info-section {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border: 2px solid #333;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .info-item {
+            background: rgba(26, 26, 26, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #444;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .info-label {
+            color: #d4af37;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .info-item span:last-child {
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        /* Controles de Boletos */
+        .boletos-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            color: white;
+            font-size: 14px;
+        }
+
+        .ocupar-btn {
+            background: #dc3545;
+        }
+
+        .liberar-btn {
+            background: #28a745;
+        }
+
+        .save-btn {
+            background: #007bff;
+        }
+
+        .action-btn:hover {
+            opacity: 0.9;
+        }
+
+        .search-boleto {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: rgba(26, 26, 26, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #444;
+        }
+
+        .search-boleto input {
+            padding: 10px 15px;
+            border: 2px solid #444;
+            border-radius: 8px;
+            background: #2a2a2a;
+            color: white;
+            width: 200px;
+            font-size: 14px;
+        }
+
+        .search-boleto input:focus {
+            outline: none;
+            border-color: #d4af37;
+        }
+
+        .search-btn {
+            padding: 10px 20px;
+            background: #6f42c1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .search-btn:hover {
+            background: #5a2d91;
+        }
+
+        /* Sección de Boletos - SIMPLIFICADA */
+        .boletos-section {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border: 2px solid #333;
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .boletos-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .boletos-header h3 {
+            color: #d4af37;
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .leyenda {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+
+        .leyenda-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #ccc;
+            font-size: 12px;
+        }
+
+        .boleto-ejemplo {
+            width: 30px;
+            height: 25px;
+            border-radius: 5px;
+            border: 2px solid;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            font-weight: bold;
+        }
+
+        .boleto-ejemplo.disponible {
+            background: white;
+            color: #000;
+            border-color: #d4af37;
+        }
+
+        .boleto-ejemplo.ocupado {
+            background: #333;
+            color: #666;
+            border-color: #555;
+        }
+
+        .boleto-ejemplo.seleccionado {
+            background: #d4af37;
+            color: #000;
+            border-color: #ffd700;
+        }
+
+        /* Grid de Boletos - SUPER OPTIMIZADO */
+        .boletos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(55px, 1fr));
+            gap: 5px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            border: 1px solid #444;
+        }
+
+        .boleto {
+            width: 55px;
+            height: 40px;
+            border: 2px solid;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 9px;
+            user-select: none;
+            /* Eliminadas todas las transiciones para máximo rendimiento */
+        }
+
+        .boleto.disponible {
+            background: white;
+            color: #000;
+            border-color: #d4af37;
+        }
+
+        .boleto.disponible:hover {
+            background: #d4af37;
+            color: #000;
+        }
+
+        .boleto.ocupado {
+            background: #333;
+            color: #999;
+            border-color: #555;
+        }
+
+        .boleto.ocupado:hover {
+            background: #444;
+        }
+
+        .boleto.seleccionado {
+            background: #d4af37;
+            color: #000;
+            border-color: #ffd700;
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.8);
+        }
+
+        /* Scrollbar */
+        .boletos-grid::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .boletos-grid::-webkit-scrollbar-track {
+            background: #2a2a2a;
+            border-radius: 4px;
+        }
+
+        .boletos-grid::-webkit-scrollbar-thumb {
+            background: #d4af37;
+            border-radius: 4px;
+        }
+
+        /* Modal simplificado */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            margin: 15% auto;
+            padding: 25px;
+            border: 2px solid #d4af37;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 450px;
+        }
+
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: #d4af37;
+        }
+
+        .modal h2 {
+            color: #d4af37;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .modal p {
+            color: #ccc;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .modal-submit, .modal-cancel {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0 8px;
+        }
+
+        .modal-submit {
+            background: #28a745;
+            color: white;
+        }
+
+        .modal-cancel {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* Loading overlay simplificado */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+        }
+
+        .loading-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #333;
+            border-top: 3px solid #d4af37;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .rifa-selector {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .rifa-select {
+                min-width: 100%;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .boletos-actions {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+            
+            .boletos-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .leyenda {
+                justify-content: center;
+                gap: 10px;
+            }
+            
+            .boletos-grid {
+                grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+                max-height: 400px;
+                padding: 10px;
+                gap: 4px;
+            }
+            
+            .boleto {
+                width: 50px;
+                height: 35px;
+                font-size: 8px;
+            }
+
+            .search-boleto {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .search-boleto input {
+                width: 100%;
+            }
+
+            .navigation-links {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .boletos-grid {
+                grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+            }
+
+            .boleto {
+                width: 45px;
+                height: 32px;
+                font-size: 7px;
+            }
+
+            .modal-content {
+                margin: 10% auto;
+                padding: 20px;
+            }
+        }
+
+        /* Optimizaciones específicas para iOS */
+        @supports (-webkit-touch-callout: none) {
+            .boleto {
+                -webkit-tap-highlight-color: transparent;
+            }
+            
+            .boletos-grid {
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h3>Cargando boletos...</h3>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div>
+            <h1>🎟️ Gestión de Boletos</h1>
+            <p>Administra la disponibilidad de boletos por rifa</p>
+        </div>
+        <div class="user-info">
+            <div class="user-email" id="user-email">Cargando...</div>
+            <a href="#" class="logout-btn" id="logout-btn">Cerrar Sesión</a>
+        </div>
+    </header>
+
+    <!-- Navigation Links -->
+    <section class="navigation-links">
+        <a href="/dashboard" class="nav-link">🏠 Volver al Inicio</a>
+        <a href="Misrifas.html" class="nav-link">📋 Lista de Rifas</a>
+        <a href="/rifas" class="nav-link">➕ Nueva Rifa</a>
+    </section>
+
+    <!-- Selector de Rifa -->
+    <section class="controls-section">
+        <div class="rifa-selector">
+            <label for="select-rifa">🎲 Seleccionar Rifa:</label>
+            <select id="select-rifa" class="rifa-select">
+                <option value="">-- Selecciona una rifa --</option>
+            </select>
+            <button id="cargar-boletos" class="load-btn" disabled>Cargar Boletos</button>
+        </div>
+    </section>
+
+    <!-- Messages -->
+    <div id="message-container" class="message-container"></div>
+
+    <!-- Información de la Rifa -->
+    <section id="rifa-info" class="rifa-info-section" style="display: none;">
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="info-label">🏆 Título:</span>
+                <span id="info-titulo">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">📊 Estado:</span>
+                <span id="info-estado">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">🎟️ Total Boletos:</span>
+                <span id="info-total">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">✅ Disponibles:</span>
+                <span id="info-disponibles">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">❌ Ocupados:</span>
+                <span id="info-ocupados">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">💰 Precio:</span>
+                <span id="info-precio">-</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Controles de Boletos -->
+    <section id="boletos-controls" class="controls-section" style="display: none;">
+        <div class="boletos-actions">
+            <button id="btn-marcar-todos" class="action-btn ocupar-btn">❌ Marcar Todos como Ocupados</button>
+            <button id="btn-liberar-todos" class="action-btn liberar-btn">✅ Liberar Todos los Boletos</button>
+            <button id="btn-guardar-cambios" class="action-btn save-btn">💾 Guardar Cambios</button>
+        </div>
+        
+        <div class="search-boleto">
+            <input type="number" id="search-numero" placeholder="Buscar número de boleto..." min="1">
+            <button id="btn-buscar" class="search-btn">🔍 Buscar</button>
+        </div>
+    </section>
+
+    <!-- Grid de Boletos -->
+    <section id="boletos-section" class="boletos-section" style="display: none;">
+        <div class="boletos-header">
+            <h3>🎟️ Boletos de la Rifa</h3>
+            <div class="leyenda">
+                <div class="leyenda-item">
+                    <div class="boleto-ejemplo disponible"></div>
+                    <span>Disponible</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="boleto-ejemplo ocupado"></div>
+                    <span>Ocupado</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="boleto-ejemplo seleccionado"></div>
+                    <span>Modificado</span>
+                </div>
+            </div>
+        </div>
+        
+        <div id="boletos-grid" class="boletos-grid">
+            <!-- Se llenarán dinámicamente -->
+        </div>
+    </section>
+
+    <!-- Modal de Confirmación -->
+    <div id="modal-confirmacion" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="cerrarModal()">&times;</span>
+            <h2 id="modal-titulo">Confirmar Acción</h2>
+            <p id="modal-mensaje">¿Estás seguro de realizar esta acción?</p>
+            <button id="btn-confirmar" class="modal-submit">Confirmar</button>
+            <button class="modal-cancel" onclick="cerrarModal()">Cancelar</button>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let rifasData = [];
+        let rifaActual = null;
+        let boletosOriginales = [];
+        let boletosModificados = [];
+        let cambiosPendientes = false;
+
+        // Inicializar página
+        document.addEventListener('DOMContentLoaded', () => {
+            // Validar sesión
+            fetch('/rifas/api/user', { credentials: 'include' })
+                .then(res => {
+                    if (!res.ok) throw new Error('No autorizado');
+                    return res.json();
+                })
+                .then(data => {
+                    if (data.email) {
+                        document.getElementById('user-email').textContent = data.email;
+                        cargarRifas();
+                    } else {
+                        window.location.replace('/index.html');
+                    }
+                })
+                .catch(() => {
+                    window.location.replace('/index.html');
+                });
+        });
+
+        // Cargar rifas disponibles
+        async function cargarRifas() {
+            try {
+                const res = await fetch('/rifas/list', { credentials: 'include' });
+                if (!res.ok) throw new Error('Error al obtener rifas');
+                
+                const rifas = await res.json();
+                rifasData = rifas;
+                
+                const select = document.getElementById('select-rifa');
+                select.innerHTML = '<option value="">-- Selecciona una rifa --</option>';
+                
+                rifas.forEach(rifa => {
+                    const option = document.createElement('option');
+                    option.value = rifa._id;
+                    option.textContent = `${rifa.titulo} (${rifa.estatus}) - ${rifa.cantidad_boletos} boletos`;
+                    select.appendChild(option);
+                });
+                
+            } catch (error) {
+                showMessage('Error al cargar rifas: ' + error.message, 'error');
+            }
+        }
+
+        // Event listeners
+        document.getElementById('select-rifa').addEventListener('change', function() {
+            const rifaId = this.value;
+            const btn = document.getElementById('cargar-boletos');
+            
+            if (rifaId) {
+                btn.disabled = false;
+                rifaActual = rifasData.find(r => r._id === rifaId);
+            } else {
+                btn.disabled = true;
+                rifaActual = null;
+                ocultarSecciones();
+            }
+        });
+
+        document.getElementById('cargar-boletos').addEventListener('click', cargarBoletos);
+
+        document.getElementById('btn-marcar-todos').addEventListener('click', () => {
+            mostrarConfirmacion(
+                'Marcar Todos como Ocupados',
+                '¿Estás seguro de marcar TODOS los boletos como ocupados?',
+                marcarTodosOcupados
+            );
+        });
+
+        document.getElementById('btn-liberar-todos').addEventListener('click', () => {
+            mostrarConfirmacion(
+                'Liberar Todos los Boletos',
+                '¿Estás seguro de liberar TODOS los boletos?',
+                liberarTodos
+            );
+        });
+
+        document.getElementById('btn-guardar-cambios').addEventListener('click', guardarCambios);
+        document.getElementById('btn-buscar').addEventListener('click', buscarBoleto);
+
+        document.getElementById('search-numero').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                buscarBoleto();
+            }
+        });
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            fetch('/rifas/logout', { 
+                method: 'POST',
+                credentials: 'include'
+            })
+                .then(() => {
+                    window.location.replace('/index.html');
+                })
+                .catch(() => {
+                    window.location.replace('/index.html');
+                });
+        });
+
+        // Cargar boletos - SIMPLIFICADO Y RÁPIDO
+        async function cargarBoletos() {
+            if (!rifaActual) return;
+
+            try {
+                document.getElementById('loading-overlay').style.display = 'flex';
+                
+                const res = await fetch(`/rifas/get/${rifaActual._id}`, { credentials: 'include' });
+                if (!res.ok) throw new Error('Error al obtener rifa');
+                
+                const rifa = await res.json();
+                rifaActual = rifa;
+                boletosOriginales = [...(rifa.boletosOcupados || [])];
+                boletosModificados = [...boletosOriginales];
+                cambiosPendientes = false;
+                
+                mostrarInfoRifa();
+                generarGridBoletos();
+                mostrarSecciones();
+                
+                document.getElementById('loading-overlay').style.display = 'none';
+                showMessage('Boletos cargados correctamente', 'success');
+                
+            } catch (error) {
+                document.getElementById('loading-overlay').style.display = 'none';
+                showMessage('Error al cargar boletos: ' + error.message, 'error');
+            }
+        }
+
+        // Mostrar información de la rifa
+        function mostrarInfoRifa() {
+            document.getElementById('info-titulo').textContent = rifaActual.titulo;
+            document.getElementById('info-estado').textContent = rifaActual.estatus.toUpperCase();
+            document.getElementById('info-total').textContent = rifaActual.cantidad_boletos;
+            
+            const ocupados = rifaActual.boletosOcupados ? rifaActual.boletosOcupados.length : 0;
+            const disponibles = rifaActual.cantidad_boletos - ocupados;
+            
+            document.getElementById('info-disponibles').textContent = disponibles;
+            document.getElementById('info-ocupados').textContent = ocupados;
+            document.getElementById('info-precio').textContent = `$${parseFloat(rifaActual.precio).toFixed(2)}`;
+        }
+
+        // Generar grid de boletos - ULTRA RÁPIDO
+        function generarGridBoletos() {
+            const grid = document.getElementById('boletos-grid');
+            grid.innerHTML = '';
+            
+            const ocupadosSet = new Set(boletosModificados);
+            
+            // Crear todos los boletos de una vez (sin batches para máxima velocidad)
+            const fragment = document.createDocumentFragment();
+            
+            for (let i = 1; i <= rifaActual.cantidad_boletos; i++) {
+                const boleto = document.createElement('div');
+                boleto.className = 'boleto';
+                boleto.dataset.numero = i;
+                boleto.textContent = i.toString().padStart(4, '0');
+                
+                if (ocupadosSet.has(i)) {
+                    boleto.classList.add('ocupado');
+                } else {
+                    boleto.classList.add('disponible');
+                }
+                
+                // Event listener directo sin funciones complejas
+                boleto.onclick = () => toggleBoletoRapido(i, boleto);
+                
+                fragment.appendChild(boleto);
+            }
+            
+            grid.appendChild(fragment);
+            actualizarContadores();
+        }
+
+        // Toggle boleto ULTRA RÁPIDO - sin animaciones
+        function toggleBoletoRapido(numero, boletoElement) {
+            const index = boletosModificados.indexOf(numero);
+            
+            if (index > -1) {
+                // Liberar boleto
+                boletosModificados.splice(index, 1);
+                boletoElement.className = 'boleto disponible';
+            } else {
+                // Ocupar boleto
+                boletosModificados.push(numero);
+                boletoElement.className = 'boleto ocupado';
+            }
+            
+            // Verificar cambios de forma simple
+            cambiosPendientes = !arraysIguales(boletosOriginales, boletosModificados);
+            
+            // Marcar visualmente si fue modificado
+            marcarBoletoModificado(numero, boletoElement);
+            actualizarContadores();
+            actualizarBotonGuardar();
+        }
+
+        // Marcar boleto modificado visualmente
+        function marcarBoletoModificado(numero, boletoElement) {
+            const estabaOcupado = boletosOriginales.includes(numero);
+            const estaOcupado = boletosModificados.includes(numero);
+            
+            if (estabaOcupado !== estaOcupado) {
+                boletoElement.classList.add('seleccionado');
+            } else {
+                boletoElement.classList.remove('seleccionado');
+            }
+        }
+
+        // Comparar arrays de forma simple
+        function arraysIguales(arr1, arr2) {
+            if (arr1.length !== arr2.length) return false;
+            const sorted1 = [...arr1].sort((a, b) => a - b);
+            const sorted2 = [...arr2].sort((a, b) => a - b);
+            return sorted1.every((val, index) => val === sorted2[index]);
+        }
+
+        // Marcar todos como ocupados - RÁPIDO
+        function marcarTodosOcupados() {
+            boletosModificados = [];
+            for (let i = 1; i <= rifaActual.cantidad_boletos; i++) {
+                boletosModificados.push(i);
+            }
+            
+            // Actualizar visualmente todos los boletos
+            const boletos = document.querySelectorAll('.boleto');
+            boletos.forEach((boleto, index) => {
+                const numero = index + 1;
+                boleto.className = 'boleto ocupado';
+                marcarBoletoModificado(numero, boleto);
+            });
+            
+            cambiosPendientes = true;
+            actualizarContadores();
+            actualizarBotonGuardar();
+            showMessage('Todos los boletos marcados como ocupados', 'success');
+        }
+
+        // Liberar todos los boletos - RÁPIDO
+        function liberarTodos() {
+            boletosModificados = [];
+            
+            // Actualizar visualmente todos los boletos
+            const boletos = document.querySelectorAll('.boleto');
+            boletos.forEach((boleto, index) => {
+                const numero = index + 1;
+                boleto.className = 'boleto disponible';
+                marcarBoletoModificado(numero, boleto);
+            });
+            
+            cambiosPendientes = true;
+            actualizarContadores();
+            actualizarBotonGuardar();
+            showMessage('Todos los boletos liberados', 'success');
+        }
+
+        // Buscar boleto específico
+        function buscarBoleto() {
+            const numero = parseInt(document.getElementById('search-numero').value);
+            
+            if (!numero || numero < 1 || numero > rifaActual.cantidad_boletos) {
+                showMessage('Número de boleto inválido', 'error');
+                return;
+            }
+            
+            const boleto = document.querySelector(`[data-numero="${numero}"]`);
+            if (boleto) {
+                boleto.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Efecto de highlight simple
+                const originalBg = boleto.style.backgroundColor;
+                const originalBorder = boleto.style.border;
+                
+                boleto.style.backgroundColor = '#ffd700';
+                boleto.style.border = '3px solid #d4af37';
+                
+                setTimeout(() => {
+                    boleto.style.backgroundColor = originalBg;
+                    boleto.style.border = originalBorder;
+                }, 2000);
+                
+                showMessage(`Boleto ${numero.toString().padStart(4, '0')} encontrado`, 'success');
+                document.getElementById('search-numero').value = '';
+            }
+        }
+
+        // Guardar cambios - OPTIMIZADO
+        async function guardarCambios() {
+            if (!cambiosPendientes) {
+                showMessage('No hay cambios para guardar', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('btn-guardar-cambios');
+            const originalText = btn.textContent;
+            btn.textContent = 'Guardando...';
+            btn.disabled = true;
+            btn.style.background = '#6c757d';
+            
+            document.getElementById('loading-overlay').style.display = 'flex';
+
+            try {
+                // Determinar cambios
+                const originalesSet = new Set(boletosOriginales);
+                const modificadosSet = new Set(boletosModificados);
+                const cambios = [];
+                
+                for (let i = 1; i <= rifaActual.cantidad_boletos; i++) {
+                    const estabaOcupado = originalesSet.has(i);
+                    const estaOcupado = modificadosSet.has(i);
+                    
+                    if (estabaOcupado !== estaOcupado) {
+                        cambios.push(i);
+                    }
+                }
+                
+                // Procesar cambios en lotes pequeños para evitar timeout
+                const batchSize = 10;
+                
+                for (let i = 0; i < cambios.length; i += batchSize) {
+                    const batch = cambios.slice(i, i + batchSize);
+                    const promises = batch.map(numero => 
+                        fetch(`/rifas/toggle-boleto/${rifaActual._id}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'include',
+                            body: JSON.stringify({ numeroBoleto: numero })
+                        }).then(res => {
+                            if (!res.ok) throw new Error(`Error en boleto ${numero}`);
+                            return res.json();
+                        })
+                    );
+                    
+                    await Promise.all(promises);
+                }
+                
+                // Actualizar estado local
+                boletosOriginales = [...boletosModificados];
+                cambiosPendientes = false;
+                
+                showMessage(`¡Cambios guardados! ${cambios.length} boletos actualizados.`, 'success');
+                
+                // Limpiar marcas visuales
+                document.querySelectorAll('.boleto.seleccionado').forEach(boleto => {
+                    boleto.classList.remove('seleccionado');
+                });
+                
+            } catch (error) {
+                showMessage('Error al guardar cambios: ' + error.message, 'error');
+            } finally {
+                document.getElementById('loading-overlay').style.display = 'none';
+                btn.textContent = originalText;
+                btn.disabled = false;
+                btn.style.background = '';
+                actualizarBotonGuardar();
+            }
+        }
+
+        // Funciones auxiliares
+        function actualizarContadores() {
+            const ocupados = boletosModificados.length;
+            const disponibles = rifaActual.cantidad_boletos - ocupados;
+            
+            document.getElementById('info-disponibles').textContent = disponibles;
+            document.getElementById('info-ocupados').textContent = ocupados;
+        }
+
+        function actualizarBotonGuardar() {
+            const btn = document.getElementById('btn-guardar-cambios');
+            if (cambiosPendientes) {
+                btn.style.background = '#28a745';
+                btn.textContent = `💾 Guardar Cambios (${contarCambios()})`;
+            } else {
+                btn.style.background = '#007bff';
+                btn.textContent = '💾 Guardar Cambios';
+            }
+        }
+
+        function contarCambios() {
+            const originalesSet = new Set(boletosOriginales);
+            const modificadosSet = new Set(boletosModificados);
+            let cambios = 0;
+            
+            for (let i = 1; i <= rifaActual.cantidad_boletos; i++) {
+                const estabaOcupado = originalesSet.has(i);
+                const estaOcupado = modificadosSet.has(i);
+                if (estabaOcupado !== estaOcupado) cambios++;
+            }
+            return cambios;
+        }
+
+        function mostrarSecciones() {
+            document.getElementById('rifa-info').style.display = 'block';
+            document.getElementById('boletos-controls').style.display = 'block';
+            document.getElementById('boletos-section').style.display = 'block';
+        }
+
+        function ocultarSecciones() {
+            document.getElementById('rifa-info').style.display = 'none';
+            document.getElementById('boletos-controls').style.display = 'none';
+            document.getElementById('boletos-section').style.display = 'none';
+        }
+
+        function showMessage(message, type = 'success') {
+            const container = document.getElementById('message-container');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type === 'success' ? 'success-message' : 'error-message';
+            messageDiv.textContent = message;
+            container.innerHTML = '';
+            container.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.remove();
+                }
+            }, 3000);
+        }
+
+        // Modal de confirmación
+        function mostrarConfirmacion(titulo, mensaje, callback) {
+            document.getElementById('modal-titulo').textContent = titulo;
+            document.getElementById('modal-mensaje').textContent = mensaje;
+            document.getElementById('modal-confirmacion').style.display = 'block';
+            
+            document.getElementById('btn-confirmar').onclick = () => {
+                callback();
+                cerrarModal();
+            };
+        }
+
+        function cerrarModal() {
+            document.getElementById('modal-confirmacion').style.display = 'none';
+        }
+
+        // Cerrar modal con click fuera
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal-confirmacion');
+            if (event.target === modal) {
+                cerrarModal();
+            }
+        };
+
+        // Cerrar modal con Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                cerrarModal();
+            }
+        });
+
+        // Prevenir zoom en dispositivos móviles iOS
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(e) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        // Optimizar rendimiento en dispositivos móviles
+        if ('ontouchstart' in window) {
+            // Deshabilitar hover en dispositivos táctiles
+            document.body.classList.add('touch-device');
+        }
+    </script>
+
+    <style>
+        /* Optimizaciones adicionales para dispositivos táctiles */
+        .touch-device .boleto:hover {
+            background: inherit !important;
+        }
+
+        .touch-device .boleto.disponible:hover {
+            background: white !important;
+        }
+
+        .touch-device .boleto.ocupado:hover {
+            background: #333 !important;
+        }
+    </style>
+</body>
+</html>

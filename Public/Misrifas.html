@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Rifas - Sistema de Rifas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #000 0%, #1a1a1a 50%, #000 100%);
+            color: white;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background sparkles */
+        .sparkle-bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .sparkle {
+            position: absolute;
+            color: #d4af37;
+            font-size: 14px;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                opacity: 0.2; 
+                transform: translateY(0px) scale(0.8); 
+            }
+            50% { 
+                opacity: 0.8; 
+                transform: translateY(-20px) scale(1.1); 
+            }
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border-bottom: 3px solid #d4af37;
+            padding: 20px 0;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-circle {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #d4af37, #ffd700);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .logo-circle::before {
+            content: '🎲';
+            position: absolute;
+            top: -8px;
+            font-size: 16px;
+        }
+
+        .logo-text {
+            color: #000;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .brand-info h1 {
+            color: #d4af37;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .brand-info p {
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-details {
+            text-align: right;
+        }
+
+        .user-email {
+            color: #d4af37;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .user-status {
+            color: #28a745;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.5);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .welcome-title {
+            font-size: 36px;
+            color: #d4af37;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .welcome-subtitle {
+            color: #ccc;
+            font-size: 18px;
+        }
+
+        /* Navigation Links */
+        .navigation-links {
+            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+            border: 1px solid #444;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .nav-link {
+            color: #d4af37;
+            text-decoration: none;
+            font-weight: 500;
+            margin: 0 20px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            padding: 10px 15px;
+            border-radius: 20px;
+        }
+
+        .nav-link:hover {
+            background: rgba(212, 175, 55, 0.1);
+            color: #ffd700;
+        }
+
+        /* Search and Controls */
+        .controls-section {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border: 2px solid #333;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .controls-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #d4af37, #ffd700);
+        }
+
+        .search-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 300px;
+            padding: 12px 15px;
+            border: 2px solid #444;
+            border-radius: 25px;
+            background: #2a2a2a;
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+
+        .search-btn, .clear-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            color: #000;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .clear-btn {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+        }
+
+        .search-btn:hover, .clear-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .stats-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .results-count {
+            color: #d4af37;
+            font-weight: bold;
+        }
+
+        /* Table Container */
+        .table-container {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border: 2px solid #333;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .table-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #d4af37, #ffd700);
+        }
+
+        /* Desktop Table */
+        .desktop-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 4px;
+        }
+
+        .desktop-table th, 
+        .desktop-table td {
+            padding: 15px 12px;
+            text-align: center;
+            border-bottom: 1px solid #444;
+        }
+
+        .desktop-table th {
+            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+            color: #d4af37;
+            font-weight: bold;
+            font-size: 14px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .desktop-table td {
+            background: rgba(26, 26, 26, 0.5);
+            color: #ccc;
+            transition: all 0.3s ease;
+        }
+
+        .desktop-table tr:hover td {
+            background: rgba(212, 175, 55, 0.1);
+            color: white;
+        }
+
+        /* Mobile Cards - Hidden by default */
+        .mobile-cards {
+            display: none;
+            padding: 20px;
+        }
+
+        .rifa-card {
+            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+            border: 1px solid #444;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .rifa-card:hover {
+            border-color: #d4af37;
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.2);
+        }
+
+        .rifa-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #d4af37, #ffd700);
+            border-radius: 15px 15px 0 0;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .card-image {
+            width: 80px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-title {
+            flex: 1;
+        }
+
+        .card-title h3 {
+            color: #d4af37;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .card-title p {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .card-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .info-label {
+            color: #999;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .info-value {
+            color: #d4af37;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .status-activa {
+            color: #28a745;
+            font-weight: bold;
+            background: rgba(40, 167, 69, 0.1);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+
+        .status-finalizada {
+            color: #dc3545;
+            font-weight: bold;
+            background: rgba(220, 53, 69, 0.1);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            min-width: 100px;
+        }
+
+        .edit-btn {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            box-shadow: 0 2px 10px rgba(0, 123, 255, 0.3);
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            box-shadow: 0 2px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .rifa-image {
+            max-width: 80px;
+            max-height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .rifa-image:hover {
+            transform: scale(1.1);
+        }
+
+        .price-cell {
+            color: #28a745;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        /* Pagination */
+        .pagination-container {
+            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+            border: 1px solid #444;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pagination-info {
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .page-btn {
+            padding: 8px 15px;
+            border: 2px solid #444;
+            background: #2a2a2a;
+            color: #ccc;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            border-color: #d4af37;
+            color: #d4af37;
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .page-btn.active {
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            color: #000;
+            border-color: #d4af37;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Modales */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            border: 2px solid #d4af37;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #d4af37, #ffd700);
+            border-radius: 15px 15px 0 0;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #d4af37;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #ffd700;
+        }
+
+        .modal h2 {
+            color: #d4af37;
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .modal label {
+            display: block;
+            margin-top: 15px;
+            color: #d4af37;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .modal input, .modal select {
+            width: 100%;
+            padding: 12px 15px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            border: 2px solid #444;
+            border-radius: 10px;
+            background: #2a2a2a;
+            color: white;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .modal input:focus, .modal select:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+
+        .modal-submit {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            color: #000;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-size: 16px;
+        }
+
+        .modal-cancel {
+            margin-top: 10px;
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .modal-submit:hover, .modal-cancel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Loading */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #333;
+            border-radius: 50%;
+            border-top-color: #d4af37;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #d4af37;
+            font-size: 18px;
+            border-radius: 15px;
+        }
+
+        /* Messages */
+        .message-container {
+            margin-bottom: 20px;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #28a745;
+            font-weight: 500;
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #dc3545;
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .brand-info h1 {
+                font-size: 24px;
+            }
+
+            .welcome-title {
+                font-size: 28px;
+            }
+
+            .welcome-subtitle {
+                font-size: 16px;
+            }
+
+            .search-container {
+                flex-direction: column;
+            }
+
+            .search-input {
+                min-width: 100%;
+            }
+
+            .pagination-container {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            /* Hide desktop table and show mobile cards */
+            .desktop-table {
+                display: none;
+            }
+
+            .mobile-cards {
+                display: block;
+            }
+
+            .nav-link {
+                display: block;
+                margin: 10px 0;
+            }
+
+            .stats-info {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 20px 10px;
+            }
+
+            .header-content {
+                padding: 0 10px;
+            }
+
+            .controls-section,
+            .table-container,
+            .pagination-container {
+                padding: 15px;
+            }
+
+            .rifa-card {
+                padding: 15px;
+            }
+
+            .card-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .card-info {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .card-actions {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                width: 100%;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+                margin: 10% auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated background -->
+    <div class="sparkle-bg" id="sparkles"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-circle">
+                    <div class="logo-text">RIFAS</div>
+                </div>
+                <div class="brand-info">
+                    <h1>Lista de Rifas</h1>
+                    <p>Gestiona todas tus rifas registradas</p>
+                </div>
+            </div>
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-email" id="user-email">
+                        <span class="loading"></span> Cargando...
+                    </div>
+                    <div class="user-status">● En línea</div>
+                </div>
+                <a href="#" class="logout-btn" id="logout-btn">Cerrar Sesión</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+            <h2 class="welcome-title">📋 Gestión de Rifas</h2>
+            <p class="welcome-subtitle">Administra, edita y elimina tus rifas registradas</p>
+        </section>
+
+        <!-- Navigation Links -->
+        <section class="navigation-links">
+            <a href="/dashboard" class="nav-link">🏠 Volver al Inicio</a>
+            <a href="/rifas" class="nav-link">➕ Nueva Rifa</a>
+        </section>
+
+        <!-- Search and Controls -->
+        <section class="controls-section">
+            <div class="search-container">
+                <input type="text" id="search-input" class="search-input" placeholder="🔍 Buscar por título, categoría o estatus...">
+                <button id="search-btn" class="search-btn">🔍 Buscar</button>
+                <button id="clear-search" class="clear-btn">🗑️ Limpiar</button>
+            </div>
+            <div class="stats-info">
+                <span class="results-count" id="results-count">Cargando rifas...</span>
+                <span>Registros por página: <strong>5</strong></span>
+            </div>
+        </section>
+
+        <!-- Messages -->
+        <div id="message-container" class="message-container"></div>
+
+        <!-- Table Container -->
+        <section class="table-container" id="table-container">
+            <div class="loading-overlay" id="loading-overlay">
+                <div>
+                    <div class="loading"></div>
+                    <div style="margin-top: 10px;">Cargando rifas...</div>
+                </div>
+            </div>
+            
+            <!-- Desktop Table -->
+            <table class="desktop-table" id="tabla-rifas">
+                <thead>
+                    <tr>
+                        <th>🖼️ Imagen</th>
+                        <th>🏆 Título</th>
+                        <th>📅 Fecha</th>
+                        <th>🕐 Hora</th>
+                        <th>💰 Precio</th>
+                        <th>🎟️ Boletos</th>
+                        <th>📊 Estatus</th>
+                        <th>⚙️ Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Se llenará dinámicamente -->
+                </tbody>
+            </table>
+
+            <!-- Mobile Cards -->
+            <div class="mobile-cards" id="mobile-cards">
+                <!-- Se llenará dinámicamente -->
+            </div>
+        </section>
+
+        <!-- Pagination -->
+        <section class="pagination-container">
+            <div class="pagination-info" id="pagination-info">
+                Mostrando 0 - 0 de 0 rifas
+            </div>
+            <div class="pagination-controls">
+                <button class="page-btn" id="prev-btn" disabled>← Anterior</button>
+                <span id="page-numbers"></span>
+                <button class="page-btn" id="next-btn" disabled>Siguiente →</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal Editar -->
+    <div id="modal-editar" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="cerrarModalEditar()">&times;</span>
+            <h2>✏️ Editar Rifa</h2>
+            <form id="form-editar" enctype="multipart/form-data">
+                <input type="hidden" id="editar-id" />
+                
+                <label for="editar-titulo">🏆 Título:</label>
+                <input type="text" id="editar-titulo" name="titulo" required />
+
+                <label for="editar-estatus">📊 Estatus:</label>
+                <select id="editar-estatus" name="estatus" required>
+                    <option value="activa">🟢 Activa</option>
+                    <option value="finalizada">🔴 Finalizada</option>
+                </select>
+
+                <label for="editar-categoria">🏷️ Categoría:</label>
+                <input type="text" id="editar-categoria" name="categoria" />
+
+                <label for="editar-fecha_sorteo">📅 Fecha de Sorteo:</label>
+                <input type="date" id="editar-fecha_sorteo" name="fecha_sorteo" required />
+
+                <label for="editar-hora_sorteo">🕐 Hora de Sorteo:</label>
+                <input type="time" id="editar-hora_sorteo" name="hora_sorteo" required />
+
+                <label for="editar-oportunidades">🎯 Oportunidades:</label>
+                <input type="number" id="editar-oportunidades" name="oportunidades" min="1" />
+
+                <label for="editar-cantidad_boletos">🎟️ Cantidad de Boletos:</label>
+                <input type="number" id="editar-cantidad_boletos" name="cantidad_boletos" min="1" />
+
+                <label for="editar-precio">💰 Precio:</label>
+                <input type="number" step="0.01" id="editar-precio" name="precio" required />
+
+                <label for="editar-imagen">📸 Imagen (opcional):</label>
+                <input type="file" id="editar-imagen" name="imagen" accept="image/*" />
+
+                <button type="submit" class="modal-submit">💾 Guardar Cambios</button>
+                <button type="button" class="modal-cancel" onclick="cerrarModalEditar()">❌ Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Confirmar Eliminación -->
+    <div id="modal-eliminar" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="cerrarModalEliminar()">&times;</span>
+            <h2>🗑️ Confirmar Eliminación</h2>
+            <p style="color: #ccc; text-align: center; margin: 20px 0;">
+                ¿Estás seguro de eliminar esta rifa?<br>
+                <strong style="color: #dc3545;">Esta acción no se puede deshacer</strong>
+            </p>
+            <button id="btn-confirmar-eliminar" class="modal-submit" style="background: linear-gradient(135deg, #dc3545, #c82333);">
+                🗑️ Sí, eliminar
+            </button>
+            <button class="modal-cancel" onclick="cerrarModalEliminar()">❌ Cancelar</button>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let rifasGlobal = [];
+        let rifasFiltradas = [];
+        let rifaSeleccionadaId = null;
+        let paginaActual = 1;
+        const rifasPorPagina = 5;
+        let terminoBusqueda = '';
+
+        // Create animated sparkles
+        function createSparkles() {
+            const sparklesContainer = document.getElementById('sparkles');
+            const sparkleCount = 15;
+
+            for (let i = 0; i < sparkleCount; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.innerHTML = '✨';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.animationDelay = Math.random() * 6 + 's';
+                sparkle.style.animationDuration = (4 + Math.random() * 3) + 's';
+                sparklesContainer.appendChild(sparkle);
+            }
+        }
+
+        // Initialize sparkles
+        window.addEventListener('load', createSparkles);
+
+        // Validar sesión al cargar la página
+        window.addEventListener('DOMContentLoaded', () => {
+            fetch('/rifas/api/user', { credentials: 'include' })
+                .then(res => {
+                    if (!res.ok) throw new Error('No autorizado');
+                    return res.json();
+                })
+                .then(data => {
+                    if (data.email) {
+                        document.getElementById('user-email').innerHTML = `
+                            <span style="color: #d4af37;">👤</span> ${data.email}
+                        `;
+                        cargarRifas();
+                    } else {
+                        window.location.replace('/index.html');
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('user-email').innerHTML = `
+                        <span style="color: #dc3545;">⚠️</span> Error de conexión
+                    `;
+                    setTimeout(() => {
+                        window.location.replace('/index.html');
+                    }, 2000);
+                });
+        });
+
+        // Función para mostrar mensajes
+        function showMessage(message, type = 'success') {
+            const container = document.getElementById('message-container');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type === 'success' ? 'success-message' : 'error-message';
+            messageDiv.textContent = message;
+            container.innerHTML = '';
+            container.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const originalText = this.textContent;
+            this.textContent = 'Cerrando...';
+            this.style.opacity = '0.7';
+            
+            fetch('/rifas/logout', { 
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' }
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error('Error en logout');
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        this.textContent = '✓ Sesión cerrada';
+                        this.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+                        
+                        setTimeout(() => {
+                            window.location.replace('/index.html');
+                        }, 1000);
+                    } else {
+                        throw new Error('No se pudo cerrar la sesión');
+                    }
+                })
+                .catch((error) => {
+                    this.textContent = originalText;
+                    this.style.opacity = '1';
+                    showMessage('Error: ' + error.message, 'error');
+                });
+        });
+
+        // Cargar rifas
+        async function cargarRifas() {
+            const loadingOverlay = document.getElementById('loading-overlay');
+            loadingOverlay.style.display = 'flex';
+
+            try {
+                const res = await fetch('/rifas/list', { credentials: 'include' });
+                if (!res.ok) throw new Error('Error al obtener rifas');
+                
+                const rifas = await res.json();
+                rifasGlobal = rifas;
+                rifasFiltradas = rifas;
+                
+                actualizarTabla();
+                actualizarPaginacion();
+                actualizarContadores();
+                
+            } catch (error) {
+                showMessage('Error al cargar rifas: ' + error.message, 'error');
+                console.error(error);
+            } finally {
+                loadingOverlay.style.display = 'none';
+            }
+        }
+
+        // Función para convertir buffer a base64
+        function arrayBufferToBase64(buffer) {
+            const binary = new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), '');
+            return window.btoa(binary);
+        }
+
+        // Filtrar rifas
+        function filtrarRifas(termino) {
+            if (!termino.trim()) {
+                rifasFiltradas = rifasGlobal;
+            } else {
+                const terminoLower = termino.toLowerCase();
+                rifasFiltradas = rifasGlobal.filter(rifa => 
+                    rifa.titulo.toLowerCase().includes(terminoLower) ||
+                    rifa.categoria.toLowerCase().includes(terminoLower) ||
+                    rifa.estatus.toLowerCase().includes(terminoLower)
+                );
+            }
+            paginaActual = 1;
+            actualizarTabla();
+            actualizarPaginacion();
+            actualizarContadores();
+        }
+
+        // Actualizar tabla (Desktop y Mobile)
+        function actualizarTabla() {
+            const tbody = document.querySelector('#tabla-rifas tbody');
+            const mobileCards = document.getElementById('mobile-cards');
+            
+            // Limpiar contenido anterior
+            tbody.innerHTML = '';
+            mobileCards.innerHTML = '';
+
+            const inicio = (paginaActual - 1) * rifasPorPagina;
+            const fin = inicio + rifasPorPagina;
+            const rifasPagina = rifasFiltradas.slice(inicio, fin);
+
+            if (rifasPagina.length === 0) {
+                // Mensaje para desktop
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+                    <td colspan="8" style="text-align: center; padding: 40px; color: #666;">
+                        ${terminoBusqueda ? '🔍 No se encontraron rifas con ese término' : '📝 No hay rifas registradas'}
+                    </td>
+                `;
+                tbody.appendChild(fila);
+
+                // Mensaje para mobile
+                const noDataCard = document.createElement('div');
+                noDataCard.className = 'rifa-card';
+                noDataCard.style.textAlign = 'center';
+                noDataCard.style.color = '#666';
+                noDataCard.innerHTML = `
+                    <h3>${terminoBusqueda ? '🔍 No se encontraron rifas' : '📝 No hay rifas registradas'}</h3>
+                    <p>Prueba con otros términos de búsqueda</p>
+                `;
+                mobileCards.appendChild(noDataCard);
+                return;
+            }
+
+            rifasPagina.forEach(rifa => {
+                const imagenBase64 = arrayBufferToBase64(rifa.imagen.data.data);
+                const fecha = new Date(rifa.fecha_sorteo).toLocaleDateString('es-ES');
+
+                // Crear fila para desktop
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+                    <td>
+                        <img src="data:${rifa.imagen.contentType};base64,${imagenBase64}" 
+                             alt="Premio" class="rifa-image">
+                    </td>
+                    <td style="text-align: left; max-width: 200px;">
+                        <strong style="color: #d4af37;">${rifa.titulo}</strong>
+                        <br><small style="color: #999;">📂 ${rifa.categoria}</small>
+                    </td>
+                    <td>${fecha}</td>
+                    <td>${rifa.hora_sorteo}</td>
+                    <td class="price-cell">${parseFloat(rifa.precio).toFixed(2)}</td>
+                    <td>
+                        <strong style="color: #007bff;">${rifa.cantidad_boletos || 'N/A'}</strong>
+                        <br><small style="color: #999;">🎯 ${rifa.oportunidades || 'N/A'} premios</small>
+                    </td>
+                    <td>
+                        <span class="${rifa.estatus === 'activa' ? 'status-activa' : 'status-finalizada'}">
+                            ${rifa.estatus === 'activa' ? '🟢 ACTIVA' : '🔴 FINALIZADA'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="action-btn edit-btn" onclick="abrirModalEditar('${rifa._id}')">
+                            ✏️ Editar
+                        </button>
+                        <button class="action-btn delete-btn" onclick="abrirModalEliminar('${rifa._id}')">
+                            🗑️ Eliminar
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(fila);
+
+                // Crear card para mobile
+                const card = document.createElement('div');
+                card.className = 'rifa-card';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <img src="data:${rifa.imagen.contentType};base64,${imagenBase64}" 
+                             alt="Premio" class="card-image">
+                        <div class="card-title">
+                            <h3>${rifa.titulo}</h3>
+                            <p>📂 ${rifa.categoria}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card-info">
+                        <div class="info-item">
+                            <span class="info-label">📅 Fecha</span>
+                            <span class="info-value">${fecha}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">🕐 Hora</span>
+                            <span class="info-value">${rifa.hora_sorteo}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">💰 Precio</span>
+                            <span class="info-value" style="color: #28a745;">${parseFloat(rifa.precio).toFixed(2)}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">🎟️ Boletos</span>
+                            <span class="info-value">${rifa.cantidad_boletos || 'N/A'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">🎯 Premios</span>
+                            <span class="info-value">${rifa.oportunidades || 'N/A'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">📊 Estatus</span>
+                            <span class="${rifa.estatus === 'activa' ? 'status-activa' : 'status-finalizada'}">
+                                ${rifa.estatus === 'activa' ? '🟢 ACTIVA' : '🔴 FINALIZADA'}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="card-actions">
+                        <button class="action-btn edit-btn" onclick="abrirModalEditar('${rifa._id}')">
+                            ✏️ Editar
+                        </button>
+                        <button class="action-btn delete-btn" onclick="abrirModalEliminar('${rifa._id}')">
+                            🗑️ Eliminar
+                        </button>
+                    </div>
+                `;
+                mobileCards.appendChild(card);
+            });
+        }
+
+        // Actualizar paginación
+        function actualizarPaginacion() {
+            const totalPaginas = Math.ceil(rifasFiltradas.length / rifasPorPagina);
+            
+            document.getElementById('prev-btn').disabled = paginaActual <= 1;
+            document.getElementById('next-btn').disabled = paginaActual >= totalPaginas;
+
+            // Números de página
+            const pageNumbers = document.getElementById('page-numbers');
+            pageNumbers.innerHTML = '';
+
+            const maxPaginas = 5;
+            let inicio = Math.max(1, paginaActual - Math.floor(maxPaginas / 2));
+            let fin = Math.min(totalPaginas, inicio + maxPaginas - 1);
+
+            if (fin - inicio < maxPaginas - 1) {
+                inicio = Math.max(1, fin - maxPaginas + 1);
+            }
+
+            for (let i = inicio; i <= fin; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `page-btn ${i === paginaActual ? 'active' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.onclick = () => cambiarPagina(i);
+                pageNumbers.appendChild(pageBtn);
+            }
+
+            // Información de paginación
+            const inicio_item = rifasFiltradas.length === 0 ? 0 : (paginaActual - 1) * rifasPorPagina + 1;
+            const fin_item = Math.min(paginaActual * rifasPorPagina, rifasFiltradas.length);
+            
+            document.getElementById('pagination-info').textContent = 
+                `Mostrando ${inicio_item} - ${fin_item} de ${rifasFiltradas.length} rifas`;
+        }
+
+        // Cambiar página
+        function cambiarPagina(pagina) {
+            paginaActual = pagina;
+            actualizarTabla();
+            actualizarPaginacion();
+        }
+
+        // Actualizar contadores
+        function actualizarContadores() {
+            const total = rifasFiltradas.length;
+            const activas = rifasFiltradas.filter(r => r.estatus === 'activa').length;
+            const finalizadas = rifasFiltradas.filter(r => r.estatus === 'finalizada').length;
+            
+            let mensaje = `📊 Total: ${total} rifas`;
+            if (terminoBusqueda) {
+                mensaje += ` (filtradas)`;
+            }
+            mensaje += ` | 🟢 Activas: ${activas} | 🔴 Finalizadas: ${finalizadas}`;
+            
+            document.getElementById('results-count').innerHTML = mensaje;
+        }
+
+        // Event listeners para búsqueda
+        document.getElementById('search-btn').addEventListener('click', () => {
+            terminoBusqueda = document.getElementById('search-input').value;
+            filtrarRifas(terminoBusqueda);
+        });
+
+        document.getElementById('search-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                terminoBusqueda = e.target.value;
+                filtrarRifas(terminoBusqueda);
+            }
+        });
+
+        document.getElementById('clear-search').addEventListener('click', () => {
+            document.getElementById('search-input').value = '';
+            terminoBusqueda = '';
+            filtrarRifas('');
+        });
+
+        // Event listeners para paginación
+        document.getElementById('prev-btn').addEventListener('click', () => {
+            if (paginaActual > 1) {
+                cambiarPagina(paginaActual - 1);
+            }
+        });
+
+        document.getElementById('next-btn').addEventListener('click', () => {
+            const totalPaginas = Math.ceil(rifasFiltradas.length / rifasPorPagina);
+            if (paginaActual < totalPaginas) {
+                cambiarPagina(paginaActual + 1);
+            }
+        });
+
+        // MODAL EDITAR
+        function abrirModalEditar(id) {
+            rifaSeleccionadaId = id;
+            const rifa = rifasGlobal.find(r => r._id === id);
+            if (!rifa) {
+                showMessage('Rifa no encontrada', 'error');
+                return;
+            }
+
+            document.getElementById('editar-id').value = rifa._id;
+            document.getElementById('editar-titulo').value = rifa.titulo;
+            document.getElementById('editar-estatus').value = rifa.estatus;
+            document.getElementById('editar-categoria').value = rifa.categoria || '';
+            document.getElementById('editar-fecha_sorteo').value = new Date(rifa.fecha_sorteo).toISOString().slice(0, 10);
+            document.getElementById('editar-hora_sorteo').value = rifa.hora_sorteo;
+            document.getElementById('editar-oportunidades').value = rifa.oportunidades || '';
+            document.getElementById('editar-cantidad_boletos').value = rifa.cantidad_boletos || '';
+            document.getElementById('editar-precio').value = rifa.precio;
+            document.getElementById('editar-imagen').value = '';
+
+            document.getElementById('modal-editar').style.display = 'block';
+        }
+
+        function cerrarModalEditar() {
+            document.getElementById('modal-editar').style.display = 'none';
+            rifaSeleccionadaId = null;
+        }
+
+        // Form editar
+        document.getElementById('form-editar').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            if (!rifaSeleccionadaId) return showMessage('No hay rifa seleccionada', 'error');
+
+            const submitBtn = this.querySelector('.modal-submit');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = '⏳ Guardando...';
+            submitBtn.disabled = true;
+
+            const formData = new FormData(this);
+            
+            try {
+                const res = await fetch(`/rifas/edit/${rifaSeleccionadaId}`, {
+                    method: 'PUT',
+                    body: formData,
+                    credentials: 'include'
+                });
+
+                const textResponse = await res.text();
+                let data;
+                try {
+                    data = JSON.parse(textResponse);
+                } catch (parseError) {
+                    throw new Error('Respuesta del servidor no válida');
+                }
+
+                if (res.ok) {
+                    showMessage('✅ ' + (data.message || 'Rifa actualizada correctamente'), 'success');
+                    cerrarModalEditar();
+                    await cargarRifas();
+                } else {
+                    showMessage('❌ ' + (data.message || 'Error al actualizar'), 'error');
+                }
+            } catch (error) {
+                showMessage('❌ Error de conexión al actualizar: ' + error.message, 'error');
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // MODAL ELIMINAR
+        function abrirModalEliminar(id) {
+            rifaSeleccionadaId = id;
+            const rifa = rifasGlobal.find(r => r._id === id);
+            if (rifa) {
+                document.querySelector('#modal-eliminar p').innerHTML = `
+                    ¿Estás seguro de eliminar la rifa?<br>
+                    <strong style="color: #d4af37;">"${rifa.titulo}"</strong><br>
+                    <strong style="color: #dc3545;">Esta acción no se puede deshacer</strong>
+                `;
+            }
+            document.getElementById('modal-eliminar').style.display = 'block';
+        }
+
+        function cerrarModalEliminar() {
+            document.getElementById('modal-eliminar').style.display = 'none';
+            rifaSeleccionadaId = null;
+        }
+
+        // Confirmar eliminación
+        document.getElementById('btn-confirmar-eliminar').addEventListener('click', async () => {
+            if (!rifaSeleccionadaId) return;
+
+            const btn = document.getElementById('btn-confirmar-eliminar');
+            const originalText = btn.textContent;
+            btn.textContent = '⏳ Eliminando...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`/rifas/delete/${rifaSeleccionadaId}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+
+                const textResponse = await res.text();
+                let data;
+                try {
+                    data = JSON.parse(textResponse);
+                } catch (parseError) {
+                    throw new Error('Respuesta del servidor no válida');
+                }
+
+                if (res.ok) {
+                    showMessage('✅ ' + (data.message || 'Rifa eliminada correctamente'), 'success');
+                    cerrarModalEliminar();
+                    await cargarRifas();
+                } else {
+                    showMessage('❌ ' + (data.message || 'Error al eliminar'), 'error');
+                }
+            } catch (error) {
+                showMessage('❌ Error de conexión al eliminar: ' + error.message, 'error');
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        // Cerrar modales con click fuera
+        window.onclick = function (event) {
+            const modalEditar = document.getElementById('modal-editar');
+            const modalEliminar = document.getElementById('modal-eliminar');
+            if (event.target === modalEditar) cerrarModalEditar();
+            if (event.target === modalEliminar) cerrarModalEliminar();
+        };
+
+        // Cerrar modales con Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                cerrarModalEditar();
+                cerrarModalEliminar();
+            }
+        });
+    </script>
+</body>
+</html>

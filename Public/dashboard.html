@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Rifas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #000 0%, #1a1a1a 50%, #000 100%);
+            color: white;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background sparkles */
+        .sparkle-bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .sparkle {
+            position: absolute;
+            color: #d4af37;
+            font-size: 14px;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                opacity: 0.2; 
+                transform: translateY(0px) scale(0.8); 
+            }
+            50% { 
+                opacity: 0.8; 
+                transform: translateY(-20px) scale(1.1); 
+            }
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border-bottom: 3px solid #d4af37;
+            padding: 20px 0;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-circle {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #d4af37, #ffd700);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .logo-circle::before {
+            content: '👑';
+            position: absolute;
+            top: -8px;
+            font-size: 16px;
+        }
+
+        .logo-text {
+            color: #000;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .brand-info h1 {
+            color: #d4af37;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .brand-info p {
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-details {
+            text-align: right;
+        }
+
+        .user-email {
+            color: #d4af37;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .user-status {
+            color: #28a745;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.5);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .welcome-title {
+            font-size: 36px;
+            color: #d4af37;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .welcome-subtitle {
+            color: #ccc;
+            font-size: 18px;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .dashboard-card {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border: 2px solid #333;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #d4af37, #ffd700);
+        }
+
+        .dashboard-card:hover {
+            border-color: #d4af37;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+        }
+
+        .card-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .card-title {
+            color: #d4af37;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .card-description {
+            color: #ccc;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .card-button {
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            color: #000;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .card-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Quick Stats */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+            border: 1px solid #444;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #d4af37;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        /* Recent Activity */
+        .recent-activity {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border: 2px solid #333;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .activity-title {
+            color: #d4af37;
+            font-size: 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid #333;
+            transition: background 0.3s ease;
+        }
+
+        .activity-item:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            font-size: 20px;
+        }
+
+        .activity-text {
+            color: #ccc;
+            flex: 1;
+        }
+
+        .activity-time {
+            color: #888;
+            font-size: 12px;
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #333;
+            border-radius: 50%;
+            border-top-color: #d4af37;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .user-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .welcome-title {
+                font-size: 28px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .main-content {
+                padding: 20px 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quick-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .logo-section {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .brand-info h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated background -->
+    <div class="sparkle-bg" id="sparkles"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-circle">
+                    <div class="logo-text">RIFAS</div>
+                </div>
+                <div class="brand-info">
+                    <h1>Panel de Control</h1>
+                    <p>Gestiona tus rifas y sorteos</p>
+                </div>
+            </div>
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-email" id="user-email">
+                        <span class="loading"></span> Cargando...
+                    </div>
+                    <div class="user-status">● En línea</div>
+                </div>
+                <a href="#" class="logout-btn" id="logout-btn">Cerrar Sesión</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+            <h2 class="welcome-title">¡Bienvenido de vuelta! 🎉</h2>
+            <p class="welcome-subtitle">Administra tus rifas y sorteos desde un solo lugar</p>
+        </section>
+
+        <!-- Quick Stats -->
+       
+        <!-- Dashboard Cards -->
+        <section class="dashboard-grid">
+            <div class="dashboard-card">
+                <span class="card-icon">🎟️</span>
+                <h3 class="card-title">Mis Rifas</h3>
+                <p class="card-description">Ver y administrar todas tus rifas activas, pendientes y completadas.</p>
+                <a href="Misrifas.html" class="card-button">Ver Rifas</a>
+            </div>
+
+            <div class="dashboard-card">
+                <span class="card-icon">➕</span>
+                <h3 class="card-title">Nueva Rifa</h3>
+                <p class="card-description">Crear una nueva rifa con premios, precios y fechas personalizadas.</p>
+                <a href="\Rifas" class="card-button">Crear Rifa</a>
+            </div>
+
+            
+            <div class="dashboard-card">
+                <span class="card-icon">🎟️</span>
+                <h3 class="card-title">Gestion De Boletos</h3>
+                <p class="card-description">Seleccionar  Boletos Disponibles y Ocupados Para Vista Rifas Publica </p>
+                <a href="GestionBoletos.html" class="card-button">Ver Boletos</a>
+            </div>
+        
+        </section>
+
+        <!-- Recent Activity -->
+      
+    </main>
+
+    <script>
+        // Create animated sparkles
+        function createSparkles() {
+            const sparklesContainer = document.getElementById('sparkles');
+            const sparkleCount = 12;
+
+            for (let i = 0; i < sparkleCount; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.innerHTML = '✨';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.animationDelay = Math.random() * 6 + 's';
+                sparkle.style.animationDuration = (4 + Math.random() * 3) + 's';
+                sparklesContainer.appendChild(sparkle);
+            }
+        }
+
+        // Initialize sparkles
+        window.addEventListener('load', createSparkles);
+
+        // TU SCRIPT ORIGINAL MEJORADO
+        // Mostrar email usuario
+        fetch('/api/user')
+            .then(res => {
+                if (!res.ok) throw new Error('No autorizado');
+                return res.json();
+            })
+            .then(data => {
+                if (data.email) {
+                    document.getElementById('user-email').innerHTML = `
+                        <span style="color: #d4af37;">👤</span> ${data.email}
+                    `;
+                } else {
+                    window.location.href = '/login';
+                }
+            })
+            .catch(() => {
+                document.getElementById('user-email').innerHTML = `
+                    <span style="color: #dc3545;">⚠️</span> Error de conexión
+                `;
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 2000);
+            });
+
+        // Logout vía POST mejorado
+        document.getElementById('logout-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Cambiar texto del botón durante el proceso
+            const originalText = this.textContent;
+            this.textContent = 'Cerrando...';
+            this.style.opacity = '0.7';
+            
+            fetch('/dashboard/logout', { method: 'POST' })
+                .then(response => {
+                    if (!response.ok) throw new Error('Error en logout');
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        this.textContent = '✓ Sesión cerrada';
+                        this.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+                        
+                        // Pequeña animación antes de redirigir
+                        setTimeout(() => {
+                            window.location.href = '/dashboard';
+                        }, 1000);
+                    } else {
+                        throw new Error('No se pudo cerrar la sesión');
+                    }
+                })
+                .catch((error) => {
+                    this.textContent = originalText;
+                    this.style.opacity = '1';
+                    alert('Error: ' + error.message);
+                });
+        });
+
+        // Agregar efectos hover dinámicos
+        document.querySelectorAll('.dashboard-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.background = 'linear-gradient(135deg, #2a2a2a, #3a3a3a)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.background = 'linear-gradient(135deg, #1a1a1a, #2a2a2a)';
+            });
+        });
+
+        // Simular actualización de stats (puedes conectar con tu API real)
+        function updateStats() {
+            const stats = document.querySelectorAll('.stat-number');
+            stats.forEach(stat => {
+                const currentValue = parseInt(stat.textContent.replace(/[^0-9]/g, ''));
+                if (currentValue && Math.random() > 0.8) {
+                    const increment = Math.floor(Math.random() * 3) + 1;
+                    const newValue = currentValue + increment;
+                    stat.style.animation = 'pulse 0.5s ease-in-out';
+                    setTimeout(() => {
+                        stat.textContent = stat.textContent.includes('$') ? 
+                            '$' + newValue.toLocaleString() : 
+                            stat.textContent.includes('%') ? 
+                            newValue + '%' : 
+                            newValue;
+                        stat.style.animation = '';
+                    }, 250);
+                }
+            });
+        }
+
+        // Actualizar stats cada 30 segundos
+        setInterval(updateStats, 30000);
+
+        // Agregar animación de pulso para las notificaciones
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+                100% { transform: scale(1); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

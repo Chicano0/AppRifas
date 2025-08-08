@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rifas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #000;
+            color: white;
+        }
+
+        /* Header */
+        .header {
+            background-color: #1a1a1a;
+            padding: 0;
+            position: relative;
+            border-bottom: 3px solid #d4af37;
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            height: 80px;
+        }
+
+        /* Logo */
+        .logo {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(45deg, #d4af37, #ffd700);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 30px;
+            position: relative;
+            border: 4px solid #d4af37;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .logo::before {
+            content: '👑';
+            position: absolute;
+            top: -10px;
+            font-size: 20px;
+        }
+
+        .logo-content {
+            text-align: center;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .logo-main {
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        .logo-sub {
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .wheat-decoration {
+            position: absolute;
+            font-size: 16px;
+            color: #d4af37;
+        }
+
+        .wheat-left {
+            left: -5px;
+            top: 20px;
+        }
+
+        .wheat-right {
+            right: -5px;
+            top: 20px;
+        }
+
+        /* Navigation */
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            flex: 1;
+            justify-content: space-around;
+            padding: 0 50px;
+        }
+
+        .nav-item {
+            border-left: 1px solid #333;
+            flex: 1;
+            text-align: center;
+        }
+
+        .nav-item:last-child {
+            border-right: 1px solid #333;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            padding: 30px 20px;
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background-color: #d4af37;
+            color: #000;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            height: 80vh;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), 
+                        url('https://images.unsplash.com/photo-1563720223185-11003d516935?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+            padding: 20px 60px;
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+            transition: all 0.3s ease;
+            letter-spacing: 2px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(220, 53, 69, 0.6);
+            background: linear-gradient(135deg, #e74c3c, #dc3545);
+        }
+
+        .cta-button:active {
+            transform: translateY(-1px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                height: auto;
+                padding: 20px 0;
+            }
+
+            .nav-menu {
+                flex-direction: column;
+                width: 100%;
+                padding: 0;
+                margin-top: 20px;
+            }
+
+            .nav-item {
+                border-left: none;
+                border-bottom: 1px solid #333;
+            }
+
+            .nav-item:last-child {
+                border-right: none;
+            }
+
+            .nav-link {
+                padding: 15px 20px;
+            }
+
+            .logo {
+                width: 100px;
+                height: 100px;
+                margin: 0;
+            }
+
+            .logo-main {
+                font-size: 20px;
+            }
+
+            .cta-button {
+                padding: 15px 40px;
+                font-size: 18px;
+            }
+        }
+
+        /* Additional Effects */
+        .sparkle {
+            position: absolute;
+            color: #d4af37;
+            animation: sparkle 2s infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        .hero::before {
+            content: '✨';
+            position: absolute;
+            top: 20%;
+            left: 10%;
+            font-size: 30px;
+            animation: sparkle 3s infinite;
+        }
+
+        .hero::after {
+            content: '✨';
+            position: absolute;
+            top: 60%;
+            right: 15%;
+            font-size: 25px;
+            animation: sparkle 2.5s infinite 1s;
+        }
+
+        /* Sections Styling */
+        .section {
+            padding: 80px 0;
+            background-color: #1a1a1a;
+        }
+
+        .section-dark {
+            background-color: #000;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            color: #d4af37;
+            margin-bottom: 60px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* FAQ Styles */
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            margin-bottom: 20px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            border-color: #d4af37;
+        }
+
+        .faq-question {
+            background: linear-gradient(135deg, #333, #2a2a2a);
+            color: #d4af37;
+            padding: 20px;
+            margin: 0;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            color: #000;
+        }
+
+        .faq-arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .faq-answer {
+            background-color: #1a1a1a;
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-answer.active {
+            padding: 20px;
+            max-height: 200px;
+        }
+
+        .faq-answer p {
+            color: #ccc;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* Contact Styles */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #333, #2a2a2a);
+            border-radius: 15px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            border-color: #d4af37;
+            transform: translateY(-5px);
+        }
+
+        .contact-icon {
+            font-size: 2.5rem;
+            margin-right: 20px;
+            width: 60px;
+            text-align: center;
+        }
+
+        .contact-details h4 {
+            color: #d4af37;
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+        }
+
+        .contact-details p {
+            color: #ccc;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .contact-btn {
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+      
+    
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+        }
+
+        /* Payment Styles */
+        .payment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .payment-category {
+            background: linear-gradient(135deg, #2a2a2a, #333);
+            padding: 30px;
+            border-radius: 20px;
+            border: 2px solid #d4af37;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .payment-category:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.2);
+        }
+
+        .payment-category h3 {
+            color: #d4af37;
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .payment-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .payment-item {
+            display: flex;
+            align-items: center;
+            background-color: #1a1a1a;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #555;
+            transition: all 0.3s ease;
+        }
+
+        .payment-item:hover {
+            border-color: #d4af37;
+            background-color: #333;
+        }
+
+        .payment-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            width: 30px;
+        }
+
+        .payment-item span {
+            color: #ccc;
+            font-weight: 500;
+        }
+
+        .payment-info {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .payment-note {
+            background: linear-gradient(135deg, #2a2a2a, #333);
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 5px solid #d4af37;
+        }
+
+        .payment-note h4 {
+            color: #d4af37;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .payment-note ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .payment-note li {
+            color: #ccc;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .security-badges {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            color: #000;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .payment-info {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .contact-form {
+                padding: 25px;
+            }
+
+            .payment-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+
+        
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">
+                <div class="wheat-decoration wheat-left">🌾</div>
+                <div class="wheat-decoration wheat-right">🌾</div>
+                <div class="logo-content">
+                    <div class="logo-main">RIFAS</div>
+                    <div class="logo-sub"></div>
+                </div>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#inicio" class="nav-link">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#preguntas" class="nav-link">Preguntas Frecuentes</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#contacto" class="nav-link">Contacto</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#metodos" class="nav-link">Métodos de Pago</a>
+                </li>
+              
+            </ul>
+        </nav>
+    </header>
+
+    <main class="hero" id="inicio">
+        <div class="hero-content">
+            <button class="cta-button" onclick="showAvailable()">
+                - LISTA DE DISPONIBLES -
+            </button>
+        </div>
+    </main>
+
+    <!-- Preguntas Frecuentes Section -->
+    <section id="preguntas" class="section">
+        <div class="container">
+            <h2 class="section-title">Preguntas Frecuentes</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <h3 class="faq-question" onclick="toggleFAQ(this)">
+                        ¿Cómo funciona la rifa? <span class="faq-arrow">▼</span>
+                    </h3>
+                    <div class="faq-answer">
+                        <p>Nuestras rifas son completamente legales y transparentes. Compras boletos numerados y el día del sorteo se selecciona al ganador de forma aleatoria mediante transmisión en vivo.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <h3 class="faq-question" onclick="toggleFAQ(this)">
+                        ¿Cuándo se realizan los sorteos? <span class="faq-arrow">▼</span>
+                    </h3>
+                    <div class="faq-answer">
+                        <p>Los sorteos se realizan cada domingo a las 8:00 PM en transmisión en vivo por nuestras redes sociales. La fecha exacta se anuncia al completarse la venta de boletos.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <h3 class="faq-question" onclick="toggleFAQ(this)">
+                        ¿Cómo puedo comprar boletos? <span class="faq-arrow">▼</span>
+                    </h3>
+                    <div class="faq-answer">
+                        <p>Puedes comprar boletos a través de nuestro sitio web, por WhatsApp, o directamente en nuestras oficinas. Aceptamos múltiples métodos de pago para tu comodidad.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <h3 class="faq-question" onclick="toggleFAQ(this)">
+                        ¿Qué pasa si gano? <span class="faq-arrow">▼</span>
+                    </h3>
+                    <div class="faq-answer">
+                        <p>¡Felicidades! Te contactaremos inmediatamente después del sorteo. Puedes recoger tu premio en nuestras oficinas o coordinamos la entrega según el tipo de premio.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <h3 class="faq-question" onclick="toggleFAQ(this)">
+                        ¿Puedo comprar varios boletos? <span class="faq-arrow">▼</span>
+                    </h3>
+                    <div class="faq-answer">
+                        <p>¡Por supuesto! Entre más boletos compres, más oportunidades tienes de ganar. Ofrecemos descuentos especiales para compras de múltiples boletos.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <h3 class="faq-question" onclick="toggleFAQ(this)">
+                        ¿Es seguro participar? <span class="faq-arrow">▼</span>
+                    </h3>
+                    <div class="faq-answer">
+                        <p>Absolutamente. Somos una empresa registrada con años de experiencia. Todos nuestros sorteos son supervisados y grabados para garantizar total transparencia.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contacto Section -->
+  <section id="contacto" class="section section-dark">
+  <div class="container">
+    <h2 class="section-title">Contacto</h2>
+    <div class="contact-grid">
+      <div class="contact-item">
+        <div class="contact-icon">📱</div>
+        <div class="contact-details">
+          <h4>WhatsApp</h4>
+          <p>+52 844 679 8889</p>
+          <button class="contact-btn" onclick="openWhatsApp()">Enviar Mensaje</button>
+        </div>
+      </div>
+
+      <div class="contact-item">
+        <div class="contact-icon">📧</div>
+        <div class="contact-details">
+          <h4>Email</h4>
+          <p>info@rifasjd.com</p>
+          <button class="contact-btn" onclick="sendEmail()">Enviar Email</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+    <!-- Métodos de Pago Section -->
+    <section id="metodos" class="section">
+        <div class="container">
+            <h2 class="section-title">Métodos de Pago</h2>
+            <div class="payment-grid">
+                <div class="payment-category">
+                    <h3>💳 Tarjetas</h3>
+                    <div class="payment-methods">
+                        <div class="payment-item">
+                            <div class="payment-icon">💳</div>
+                            <span>BBVA</span>
+                        </div>
+                        <div class="payment-item">
+                            <div class="payment-icon">💳</div>
+                            <span>Banorte</span>
+                        </div>
+                       
+                    </div>
+                </div>
+                
+               
+                <div class="payment-category">
+                    <h3>📱 Pagos En Tiendas</h3>
+                    <div class="payment-methods">
+                        <div class="payment-item">
+                            <div class="payment-icon">📱</div>
+                            <span>Oxxo</span>
+                        </div>
+                        <div class="payment-item">
+                            <div class="payment-icon">📱</div>
+                            <span>Seven</span>
+                        </div>
+                       
+                    </div>
+                </div>
+                
+                <div class="payment-category">
+                    <h3>🏦 Bancos</h3>
+                    <div class="payment-methods">
+                        <div class="payment-item">
+                            <div class="payment-icon">🏦</div>
+                            <span>Depósito Bancario</span>
+                        </div>
+                        <div class="payment-item">
+                            <div class="payment-icon">🏦</div>
+                            <span>Transferencia</span>
+                        </div>
+                    
+                    </div>
+                </div>
+            </div>
+            
+            <div class="payment-info">
+                <div class="payment-note">
+                    <h4>📋 Información Importante:</h4>
+                    <ul>
+                        <li>✅ Todos los pagos son procesados de forma segura</li>
+                        <li>✅ Confirmación inmediata por WhatsApp</li>
+                        <li>✅ Boletos digitales enviados al instante</li>
+                        <li>✅ Soporte 24/7 para resolver dudas</li>
+                    </ul>
+                </div>
+                
+                <div class="security-badges">
+                    <div class="badge">🔒 SSL Seguro</div>
+                    <div class="badge">✅ Verificado</div>
+                    <div class="badge">🛡️ Protegido</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+         function showAvailable() {
+    window.location.href = 'RifasPublica.html';
+  }
+        // FAQ Toggle Function
+        function toggleFAQ(element) {
+            const answer = element.nextElementSibling;
+            const arrow = element.querySelector('.faq-arrow');
+            
+            answer.classList.toggle('active');
+            
+            if (answer.classList.contains('active')) {
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Contact Functions
+        function openWhatsApp() {
+            window.open('https://wa.me/528441234567?text=Hola, me interesa información sobre las rifas', '_blank');
+        }
+
+        function sendEmail() {
+            window.open('mailto:info@rifasjd.com?subject=Consulta sobre rifas&body=Hola, me gustaría obtener más información sobre las rifas disponibles.');
+        }
+
+        function openMaps() {
+            window.open('https://www.google.com/maps/search/Blvd.+Fundadores+1234+Saltillo+Coahuila', '_blank');
+        }
+
+        function submitContactForm(event) {
+            event.preventDefault();
+            alert('¡Gracias por tu mensaje! Te contactaremos pronto.');
+            event.target.reset();
+        }
+
+        // Add some interactive sparkle effects
+        document.addEventListener('mousemove', function(e) {
+            if (Math.random() > 0.95) {
+                createSparkle(e.clientX, e.clientY);
+            }
+        });
+
+        function createSparkle(x, y) {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.style.left = x + 'px';
+            sparkle.style.top = y + 'px';
+            sparkle.style.position = 'fixed';
+            sparkle.style.pointerEvents = 'none';
+            sparkle.style.zIndex = '1000';
+            sparkle.innerHTML = '✨';
+            
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => {
+                sparkle.remove();
+            }, 2000);
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                
+                if (targetSection) {
+                    targetSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+
+
+<footer style="text-align: center; padding: 10px; font-size: 13px; color: #888;">
+  © 2025 | Desarrollado por <a href="" target="_blank" style="color: #facc15; text-decoration: none;">Uriel Balderas</a>
+</footer>
+
+</body>
+</html>

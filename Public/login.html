@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Rifas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #000 0%, #1a1a1a 50%, #000 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: hidden;
+            padding: 15px;
+        }
+
+        /* Animated background sparkles */
+        .sparkle-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .sparkle {
+            position: absolute;
+            color: #d4af37;
+            font-size: 16px;
+            animation: float 4s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                opacity: 0.3; 
+                transform: translateY(0px) scale(0.8); 
+            }
+            50% { 
+                opacity: 1; 
+                transform: translateY(-15px) scale(1.1); 
+            }
+        }
+
+        /* Main container - Más compacto */
+        .login-container {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border: 2px solid #d4af37;
+            border-radius: 20px;
+            padding: 25px 20px;
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.2);
+            max-width: 320px;
+            width: 100%;
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #d4af37, #ffd700, #d4af37);
+            border-radius: 20px;
+            z-index: -1;
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Logo más compacto */
+        .logo {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .logo-circle {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(45deg, #d4af37, #ffd700);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            position: relative;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .logo-circle::before {
+            content: '👑';
+            position: absolute;
+            top: -10px;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            color: #000;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .logo-subtitle {
+            color: #d4af37;
+            font-size: 14px;
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Forms más compactas */
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #333;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            padding-left: 45px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        .form-input::placeholder {
+            color: #999;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: #d4af37;
+        }
+
+        /* Botón mostrar/ocultar contraseña */
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #d4af37;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 5px;
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: #ffd700;
+        }
+
+        .submit-button {
+            width: 100%;
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.6);
+            background: linear-gradient(135deg, #e74c3c, #dc3545);
+        }
+
+        .submit-button:active {
+            transform: translateY(-1px);
+        }
+
+        /* Additional links */
+        .form-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .form-link {
+            color: #d4af37;
+            text-decoration: none;
+            font-size: 13px;
+            transition: color 0.3s ease;
+        }
+
+        .form-link:hover {
+            color: #ffd700;
+            text-decoration: underline;
+        }
+
+        /* Back to main site */
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #d4af37;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .back-link:hover {
+            color: #ffd700;
+            transform: translateX(-3px);
+        }
+
+        /* Messages */
+        .success-message, .error-message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            display: none;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+        }
+
+        /* Responsive para iOS mini y dispositivos pequeños */
+        @media (max-width: 390px) {
+            body {
+                padding: 10px;
+            }
+            
+            .login-container {
+                padding: 20px 15px;
+                max-width: 300px;
+                border-radius: 18px;
+                margin: auto;
+            }
+
+            .logo-circle {
+                width: 60px;
+                height: 60px;
+            }
+
+            .logo-text {
+                font-size: 20px;
+            }
+
+            .logo-subtitle {
+                font-size: 12px;
+            }
+
+            .form-input {
+                padding: 12px 14px;
+                padding-left: 40px;
+                font-size: 16px; /* Mantener 16px para evitar zoom en iOS */
+            }
+
+            .input-icon {
+                left: 12px;
+                font-size: 14px;
+            }
+
+            .password-toggle {
+                right: 12px;
+                font-size: 14px;
+            }
+
+            .submit-button {
+                padding: 13px;
+                font-size: 15px;
+            }
+
+            .back-link {
+                top: 15px;
+                left: 15px;
+                font-size: 13px;
+            }
+        }
+
+        /* iPhone SE y dispositivos muy pequeños */
+        @media (max-width: 320px) {
+            .login-container {
+                max-width: 280px;
+                padding: 18px 12px;
+            }
+
+            .logo-circle {
+                width: 55px;
+                height: 55px;
+            }
+
+            .logo-text {
+                font-size: 18px;
+            }
+
+            .form-group {
+                margin-bottom: 18px;
+            }
+        }
+
+        /* Landscape mode para dispositivos pequeños */
+        @media (max-height: 600px) and (orientation: landscape) {
+            body {
+                align-items: center;
+                justify-content: center;
+                padding: 15px;
+            }
+
+            .login-container {
+                margin: 0;
+            }
+
+            .logo {
+                margin-bottom: 15px;
+            }
+
+            .logo-circle {
+                width: 50px;
+                height: 50px;
+            }
+
+            .logo-circle::before {
+                top: -8px;
+                font-size: 16px;
+            }
+
+            .logo-text {
+                font-size: 16px;
+            }
+
+            .logo-subtitle {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated background -->
+    <div class="sparkle-bg" id="sparkles"></div>
+
+    <!-- Back to main site -->
+    <a href="index.html" class="back-link" onclick="goBack()">← Volver al sitio</a>
+
+    <div class="login-container">
+        <!-- Logo -->
+        <div class="logo">
+            <div class="logo-circle">
+                <div class="logo-text">RIFAS</div>
+            </div>
+            <div class="logo-subtitle">Acceso Seguro</div>
+        </div>
+
+        <!-- Success/Error messages -->
+        <div class="success-message" id="successMessage"></div>
+        <div class="error-message" id="errorMessage"></div>
+
+        <!-- Login Form -->
+        <div class="form-container">
+            <form action="/login" method="POST" onsubmit="return handleSubmit(event, 'login')">
+                <div class="form-group">
+                    <div class="input-icon">📧</div>
+                    <input type="email" name="email" class="form-input" placeholder="Correo electrónico" required>
+                </div>
+                <div class="form-group">
+                    <div class="input-icon">🔒</div>
+                    <input type="password" name="password" id="passwordField" class="form-input" placeholder="Contraseña" required>
+                    <button type="button" class="password-toggle" onclick="togglePassword()">👁️</button>
+                </div>
+                <button type="submit" class="submit-button">Entrar</button>
+            </form>
+            <div class="form-links">
+                <a href="#" class="form-link" onclick="showForgotPassword()">¿Olvidaste tu contraseña?</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create animated sparkles (reducido para mejor performance)
+        function createSparkles() {
+            const sparklesContainer = document.getElementById('sparkles');
+            const sparkleCount = 8; // Reducido para dispositivos móviles
+
+            for (let i = 0; i < sparkleCount; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.innerHTML = '✨';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.animationDelay = Math.random() * 4 + 's';
+                sparkle.style.animationDuration = (3 + Math.random() * 2) + 's';
+                sparklesContainer.appendChild(sparkle);
+            }
+        }
+
+        // Toggle password visibility
+        function togglePassword() {
+            const passwordField = document.getElementById('passwordField');
+            const toggleButton = document.querySelector('.password-toggle');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleButton.innerHTML = '🙈';
+            } else {
+                passwordField.type = 'password';
+                toggleButton.innerHTML = '👁️';
+            }
+        }
+
+        // Handle form submission
+        function handleSubmit(event, formType) {
+            // Form validation can be added here
+            return true;
+        }
+
+        // Show success or error messages
+        function showMessage(message, type) {
+            hideMessages();
+            
+            const messageElement = document.getElementById(type + 'Message');
+            messageElement.textContent = message;
+            messageElement.style.display = 'block';
+
+            // Auto-hide after 4 seconds
+            setTimeout(() => {
+                messageElement.style.display = 'none';
+            }, 4000);
+        }
+
+        // Hide all messages
+        function hideMessages() {
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        // Show forgot password alert
+        function showForgotPassword() {
+            alert('Por favor contacta al soporte via WhatsApp: +52 844 123 4567');
+        }
+
+        // Go back to main site
+        function goBack() {
+            // Replace with your main site URL
+            window.location.href = '#';
+        }
+
+        // Reduced mouse sparkle effect for mobile performance
+        let lastSparkleTime = 0;
+        document.addEventListener('mousemove', function(e) {
+            const now = Date.now();
+            if (now - lastSparkleTime > 500 && Math.random() > 0.98) {
+                createFloatingSparkle(e.clientX, e.clientY);
+                lastSparkleTime = now;
+            }
+        });
+
+        function createFloatingSparkle(x, y) {
+            const sparkle = document.createElement('div');
+            sparkle.innerHTML = '✨';
+            sparkle.style.position = 'fixed';
+            sparkle.style.left = x + 'px';
+            sparkle.style.top = y + 'px';
+            sparkle.style.color = '#d4af37';
+            sparkle.style.fontSize = '14px';
+            sparkle.style.pointerEvents = 'none';
+            sparkle.style.zIndex = '1000';
+            sparkle.style.animation = 'float 1.5s ease-out forwards';
+            
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => {
+                sparkle.remove();
+            }, 1500);
+        }
+
+        // Initialize sparkles when page loads
+        window.addEventListener('load', createSparkles);
+
+        // Prevent zoom on double tap for iOS
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
+</body>
+</html>

@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Rifa - Sistema de Rifas</title>
+
+</head>
+<body>
+        <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #000 0%, #1a1a1a 50%, #000 100%);
+            color: white;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background sparkles */
+        .sparkle-bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .sparkle {
+            position: absolute;
+            color: #d4af37;
+            font-size: 14px;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                opacity: 0.2; 
+                transform: translateY(0px) scale(0.8); 
+            }
+            50% { 
+                opacity: 0.8; 
+                transform: translateY(-20px) scale(1.1); 
+            }
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border-bottom: 3px solid #d4af37;
+            padding: 20px 0;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-circle {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #d4af37, #ffd700);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .logo-circle::before {
+            content: '🎲';
+            position: absolute;
+            top: -8px;
+            font-size: 16px;
+        }
+
+        .logo-text {
+            color: #000;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .brand-info h1 {
+            color: #d4af37;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .brand-info p {
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-details {
+            text-align: right;
+        }
+
+        .user-email {
+            color: #d4af37;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .user-status {
+            color: #28a745;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.5);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .welcome-title {
+            font-size: 36px;
+            color: #d4af37;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .welcome-subtitle {
+            color: #ccc;
+            font-size: 18px;
+        }
+
+        /* Form Container */
+        .form-container {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border: 2px solid #333;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #d4af37, #ffd700);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #d4af37;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px 15px;
+            border: 2px solid #444;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #2a2a2a;
+            color: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #d4af37;
+            background: #333;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            padding: 12px 15px;
+            border: 2px dashed #d4af37;
+            border-radius: 10px;
+            background: rgba(212, 175, 55, 0.1);
+            color: #d4af37;
+            cursor: pointer;
+            display: block;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .file-input-label:hover {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: #ffd700;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            color: #000;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Navigation */
+        .navigation-links {
+            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+            border: 1px solid #444;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .nav-link {
+            color: #d4af37;
+            text-decoration: none;
+            font-weight: 500;
+            margin: 0 20px;
+            transition: color 0.3s ease;
+            display: inline-block;
+            padding: 10px 15px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(212, 175, 55, 0.1);
+            color: #ffd700;
+        }
+
+        /* Messages */
+        .message-container {
+            margin-bottom: 20px;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #28a745;
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #dc3545;
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #333;
+            border-radius: 50%;
+            border-top-color: #d4af37;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Form loading state */
+        .form-loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .user-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .welcome-title {
+                font-size: 28px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-container {
+                padding: 30px 20px;
+            }
+
+            .nav-link {
+                display: block;
+                margin: 10px 0;
+            }
+
+            .main-content {
+                padding: 20px 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-section {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .brand-info h1 {
+                font-size: 24px;
+            }
+
+            .form-container {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+    <!-- Animated background -->
+    <div class="sparkle-bg" id="sparkles"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-circle">
+                    <div class="logo-text">RIFAS</div>
+                </div>
+                <div class="brand-info">
+                    <h1>Registrar Rifa</h1>
+                    <p>Crea una nueva rifa personalizada</p>
+                </div>
+            </div>
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-email" id="user-email">
+                        <span class="loading"></span> Cargando...
+                    </div>
+                    <div class="user-status">● En línea</div>
+                </div>
+                <a href="#" class="logout-btn" id="logout-btn">Cerrar Sesión</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+            <h2 class="welcome-title">🎲 Nueva Rifa</h2>
+            <p class="welcome-subtitle">Completa la información para crear tu rifa</p>
+        </section>
+
+        <!-- Navigation Links -->
+        <section class="navigation-links">
+            <a href="/dashboard" class="nav-link">🏠 Volver al Inicio</a>
+        </section>
+
+        <!-- Form Container -->
+        <section class="form-container">
+            <div id="message-container" class="message-container"></div>
+
+            <form id="rifas-form" enctype="multipart/form-data">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label for="titulo">🏆 Título de la Rifa</label>
+                        <input type="text" id="titulo" name="titulo" required placeholder="Ej: Rifa de iPhone 15 Pro">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="estatus">📊 Estatus</label>
+                        <select id="estatus" name="estatus" required>
+                            <option value="">Seleccione el estatus...</option>
+                            <option value="activa">🟢 Activa</option>
+                            <option value="finalizada">🔴 Finalizada</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="categoria">🏷️ Categoría</label>
+                        <input type="text" id="categoria" name="categoria" required placeholder="Ej: Electrónicos, Autos, etc.">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fecha_sorteo">📅 Fecha de Sorteo</label>
+                        <input type="date" id="fecha_sorteo" name="fecha_sorteo" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="hora_sorteo">🕐 Hora de Sorteo</label>
+                        <input type="time" id="hora_sorteo" name="hora_sorteo" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="oportunidades">🎯 Oportunidades</label>
+                        <input type="number" id="oportunidades" name="oportunidades" min="1" required placeholder="Número de premios">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cantidad_boletos">🎟️ Cantidad de Boletos</label>
+                        <input type="number" id="cantidad_boletos" name="cantidad_boletos" min="1" required placeholder="Total de boletos disponibles">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="precio">💰 Precio por Boleto ($)</label>
+                        <input type="number" id="precio" name="precio" min="0" step="0.01" required placeholder="0.00">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>📸 Imagen del Premio</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="imagen" name="imagen" accept="image/*" required>
+                            <label for="imagen" class="file-input-label">
+                                📁 Seleccionar imagen del premio
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submit-btn">
+                    🎯 Registrar Rifa
+                </button>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        // Create animated sparkles (mismo que dashboard)
+        function createSparkles() {
+            const sparklesContainer = document.getElementById('sparkles');
+            const sparkleCount = 12;
+
+            for (let i = 0; i < sparkleCount; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.innerHTML = '✨';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.animationDelay = Math.random() * 6 + 's';
+                sparkle.style.animationDuration = (4 + Math.random() * 3) + 's';
+                sparklesContainer.appendChild(sparkle);
+            }
+        }
+
+        // Initialize sparkles
+        window.addEventListener('load', createSparkles);
+
+        // Validar sesión al cargar la página (igual que dashboard)
+        window.addEventListener('DOMContentLoaded', () => {
+            fetch('/api/user', { credentials: 'include' })
+                .then(res => {
+                    if (!res.ok) throw new Error('No autorizado');
+                    return res.json();
+                })
+                .then(data => {
+                    if (data.email) {
+                        document.getElementById('user-email').innerHTML = `
+                            <span style="color: #d4af37;">👤</span> ${data.email}
+                        `;
+                    } else {
+                        window.location.replace('/index.html');
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('user-email').innerHTML = `
+                        <span style="color: #dc3545;">⚠️</span> Error de conexión
+                    `;
+                    setTimeout(() => {
+                        window.location.replace('/index.html');
+                    }, 2000);
+                });
+
+            // Establecer fecha mínima como hoy
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('fecha_sorteo').min = today;
+        });
+
+        // Función para mostrar mensajes
+        function showMessage(message, type = 'success') {
+            const container = document.getElementById('message-container');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type === 'success' ? 'success-message' : 'error-message';
+            messageDiv.textContent = message;
+            container.innerHTML = '';
+            container.appendChild(messageDiv);
+            
+            // Auto-hide después de 5 segundos
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // Logout (igual que dashboard pero usando ruta de rifas)
+        document.getElementById('logout-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Cambiar texto del botón durante el proceso
+            const originalText = this.textContent;
+            this.textContent = 'Cerrando...';
+            this.style.opacity = '0.7';
+            
+            fetch('/rifas/logout', { 
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' }
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error('Error en logout');
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        this.textContent = '✓ Sesión cerrada';
+                        this.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+                        
+                        // Pequeña animación antes de redirigir
+                        setTimeout(() => {
+                            window.location.replace('/index.html');
+                        }, 1000);
+                    } else {
+                        throw new Error('No se pudo cerrar la sesión');
+                    }
+                })
+                .catch((error) => {
+                    this.textContent = originalText;
+                    this.style.opacity = '1';
+                    showMessage('Error: ' + error.message, 'error');
+                });
+        });
+
+        // Manejo del formulario
+        const rifasForm = document.getElementById('rifas-form');
+        const submitBtn = document.getElementById('submit-btn');
+
+        rifasForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(rifasForm);
+            
+            // Mostrar estado de carga
+            submitBtn.textContent = '⏳ Registrando...';
+            submitBtn.disabled = true;
+            rifasForm.classList.add('form-loading');
+
+            try {
+                const response = await fetch('/rifas/register', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showMessage('✅ ' + result.message, 'success');
+                    rifasForm.reset();
+                    // Restablecer el label del archivo
+                    document.querySelector('.file-input-label').textContent = '📁 Seleccionar imagen del premio';
+                    document.querySelector('.file-input-label').style.background = 'rgba(212, 175, 55, 0.1)';
+                    document.querySelector('.file-input-label').style.color = '#d4af37';
+                } else {
+                    showMessage('❌ ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('❌ Error de conexión. Intenta nuevamente.', 'error');
+            } finally {
+                // Restablecer estado del botón
+                submitBtn.textContent = '🎯 Registrar Rifa';
+                submitBtn.disabled = false;
+                rifasForm.classList.remove('form-loading');
+            }
+        });
+
+        // Actualizar label del archivo cuando se selecciona
+        document.getElementById('imagen').addEventListener('change', function(e) {
+            const label = document.querySelector('.file-input-label');
+            if (e.target.files.length > 0) {
+                label.textContent = '✅ ' + e.target.files[0].name;
+                label.style.background = 'rgba(40, 167, 69, 0.2)';
+                label.style.color = '#28a745';
+                label.style.borderColor = '#28a745';
+            } else {
+                label.textContent = '📁 Seleccionar imagen del premio';
+                label.style.background = 'rgba(212, 175, 55, 0.1)';
+                label.style.color = '#d4af37';
+                label.style.borderColor = '#d4af37';
+            }
+        });
+
+        // Validaciones en tiempo real
+        document.getElementById('cantidad_boletos').addEventListener('input', function() {
+            const oportunidades = parseInt(document.getElementById('oportunidades').value) || 0;
+            const boletos = parseInt(this.value) || 0;
+            
+            if (oportunidades > boletos && boletos > 0) {
+                showMessage('⚠️ Las oportunidades no pueden ser mayores a la cantidad de boletos', 'error');
+            }
+        });
+
+        document.getElementById('oportunidades').addEventListener('input', function() {
+            const boletos = parseInt(document.getElementById('cantidad_boletos').value) || 0;
+            const oportunidades = parseInt(this.value) || 0;
+            
+            if (oportunidades > boletos && boletos > 0) {
+                showMessage('⚠️ Las oportunidades no pueden ser mayores a la cantidad de boletos', 'error');
+            }
+        });
+    </script>
+
+
+
+</body>
+</html>

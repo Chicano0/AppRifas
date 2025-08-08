@@ -48,7 +48,7 @@ router.post('/login', async (req, res) => {
 
         req.session.user = { email: user.email }; // Guardar solo lo necesario
         console.log('🟢 Usuario logueado:', user.email);
-        res.redirect('/dashboard');
+        res.redirect('/dashboard.html');
     } catch (error) {
         console.error('Error en el login:', error);
         res.status(500).send('Error interno del servidor');
